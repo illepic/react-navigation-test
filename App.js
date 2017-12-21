@@ -123,6 +123,16 @@ class Doctors2Screen extends React.Component {
   }
 }
 
+class Random1Screen extends Component {
+  render() {
+    return (
+      <Wrapper navigation={this.props.navigation}>
+        <Text>Random Screen</Text>
+      </Wrapper>
+    )
+  }
+}
+
 const styles = StyleSheet.create({
   top: {
     marginTop: 50,
@@ -167,6 +177,21 @@ const DoctorsStack = StackNavigator({
   }
 });
 
+const RandomStack = StackNavigator({
+  Random1: {
+    screen: Random1Screen,
+    navigationOptions: ({ navigation }) => ({
+      title: 'Random',
+      headerLeft: (
+        <TouchableOpacity onPress={() => navigation.navigate('DrawerOpen')}>
+          <Text>Menu</Text>
+        </TouchableOpacity>
+      ),
+      headerStyle: { paddingLeft: 10, paddingRight: 10 },
+    })
+  }
+});
+
 const CustomTabs = ({nav, active}) => {
   console.log(nav);
   const drawer = nav.state.index;
@@ -175,15 +200,17 @@ const CustomTabs = ({nav, active}) => {
   // const screen = nav.state.routes[drawer].routes[tab].routeName;
   return(
     <View style={{flexDirection: 'row'}}>
-      <Text>Current route: {tab}</Text>
-      <Text>Match: {active === tab && 'match'}</Text>
+      <Text>{tab}</Text>
+      <Text> | {active === tab && 'match'}</Text>
       <Button
-        onPress={() => nav.navigate(goTo)}
+        onPress={() => nav.navigate('Home1')}
         title="Go to Home1"
+        disabled={active === 'HomeTab'}
       />
       <Button
         onPress={() => nav.navigate('Doctors1')}
         title="Go to Doctors1"
+        disabled={active === 'DoctorsTab'}
       />
     </View>
   )
@@ -192,9 +219,6 @@ const CustomTabs = ({nav, active}) => {
 const HomeTab = TabNavigator({
   HomeTab: {
     screen: HomeStack,
-    navigationOptions: {
-      tabBarLabel: 'HomeTab',
-    }
   },
 }, {
   tabBarPosition: 'bottom',
@@ -203,13 +227,21 @@ const HomeTab = TabNavigator({
 const DoctorsTab = TabNavigator({
   DoctorsTab: {
     screen: DoctorsStack,
+  }
+}, {
+  tabBarPosition: 'bottom',
+  tabBarComponent: ({navigation}) => <CustomTabs nav={navigation} active="DoctorsTab"/>,
+});
+const RandomTab = TabNavigator({
+  RandomTab: {
+    screen: RandomStack,
     navigationOptions: {
       tabBarLabel: 'DoctorsTab',
     }
   }
 }, {
   tabBarPosition: 'bottom',
-  tabBarComponent: ({navigation}) => <CustomTabs nav={navigation} active="DoctorsTab"/>,
+  tabBarComponent: ({navigation}) => <CustomTabs nav={navigation} active="RandomTab"/>,
 });
 
 const DrawerNav = DrawerNavigator({
@@ -218,6 +250,9 @@ const DrawerNav = DrawerNavigator({
   },
   DoctorsDrawerTab: {
     screen: DoctorsTab,
+  },
+  RandomDrawerTab: {
+    screen: RandomTab,
   }
 });
 
