@@ -22,6 +22,8 @@ class Wrapper extends React.Component {
           onPress={() => this.props.navigation.navigate('DrawerOpen')}
           title="Open drawer"
         />
+
+
       </View>
     );
   }
@@ -33,7 +35,7 @@ class LoginScreen extends React.Component {
       <View>
         <Text>Login</Text>
         <Button
-          onPress={() => this.props.navigation.navigate('HomeTab')}
+          onPress={() => this.props.navigation.navigate('Home1')}
           title="Go to HomeTab"
         />
       </View>
@@ -165,13 +167,40 @@ const DoctorsStack = StackNavigator({
   }
 });
 
-const TabNav = TabNavigator({
+const CustomTabs = ({nav, active}) => {
+  console.log(nav);
+  const drawer = nav.state.index;
+  const tab = nav.state.routes[drawer].routeName;
+
+  // const screen = nav.state.routes[drawer].routes[tab].routeName;
+  return(
+    <View style={{flexDirection: 'row'}}>
+      <Text>Current route: {tab}</Text>
+      <Text>Match: {active === tab && 'match'}</Text>
+      <Button
+        onPress={() => nav.navigate(goTo)}
+        title="Go to Home1"
+      />
+      <Button
+        onPress={() => nav.navigate('Doctors1')}
+        title="Go to Doctors1"
+      />
+    </View>
+  )
+};
+
+const HomeTab = TabNavigator({
   HomeTab: {
     screen: HomeStack,
     navigationOptions: {
       tabBarLabel: 'HomeTab',
     }
   },
+}, {
+  tabBarPosition: 'bottom',
+  tabBarComponent: ({navigation}) => <CustomTabs nav={navigation} active="HomeTab"/>,
+});
+const DoctorsTab = TabNavigator({
   DoctorsTab: {
     screen: DoctorsStack,
     navigationOptions: {
@@ -179,19 +208,16 @@ const TabNav = TabNavigator({
     }
   }
 }, {
-  initialRouteName: 'HomeTab',
   tabBarPosition: 'bottom',
-  tabBarOptions: {
-    activeTintColor: '#222',
-  }
+  tabBarComponent: ({navigation}) => <CustomTabs nav={navigation} active="DoctorsTab"/>,
 });
 
 const DrawerNav = DrawerNavigator({
   HomeDrawerTab: {
-    screen: TabNav,
+    screen: HomeTab,
   },
   DoctorsDrawerTab: {
-    screen: Doctors1Screen,
+    screen: DoctorsTab,
   }
 });
 
@@ -205,5 +231,16 @@ const StartStack = StackNavigator({
 }, {
   headerMode: 'none',
 });
+
+// class AppWithFooter extends Component {
+//   render() {
+//     return (
+//       <View style={{flex:1}}>
+//         <StartStack ref={nav => { this.navigator = nav; }}/>
+//         <View><Text>I R FOOTER</Text></View>
+//       </View>
+//     );
+//   }
+// }
 
 export default StartStack;
